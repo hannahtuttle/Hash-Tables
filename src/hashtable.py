@@ -23,7 +23,10 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
-        return hash(key)
+        out_put = (len(key) * 528) 
+        # print(out_put)
+        # return hash(key)
+        return out_put
 
 
     def _hash_djb2(self, key):
@@ -51,7 +54,25 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        idx = self._hash_mod(key)
+        # print('testing index',idx)
+        if self.storage[idx] is not None:
+            temp = self.storage[idx]
+            while temp.next is not None:
+                if temp.key is key:
+                    temp.value = value
+                    # print(temp.value)
+                    break
+                temp = temp.next
+            if temp.key is key and temp.value is value:
+                pass
+            elif temp.key is key and temp.value is not value:
+                temp.value = value
+            else:
+                temp.next = LinkedPair(key, value)
+        else:
+            self.storage[idx] = LinkedPair(key, value)
+        
 
 
 
@@ -63,7 +84,22 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        idx = self._hash_mod(key)
+        current_node = self.storage[idx]
+        previous_node = None
+        while current_node.key is not key:
+            if current_node.next is None and current_node.key is not Key:
+                print('key does not exist')
+                break
+            previous_node = current_node
+            current_node = current_node.next
+        # print(current_node.key)
+        if previous_node is not None:
+            previous_node.next = current_node.next
+            # print('checking change',previous_node.next.key)
+        else:
+            self.storage[idx] = None
+        
 
 
     def retrieve(self, key):
@@ -74,7 +110,18 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        idx = self._hash_mod(key)
+        current_node = self.storage[idx]
+        # print(key)
+        # self.storage[idx] = None
+        # print(self.storage[idx])
+        current_val = None
+        if current_node is not None:
+            while current_node.key is not key and current_node.next is not None:
+                current_node = current_node.next
+            # print(current_node.key)
+            current_val = current_node.value
+        return current_val
 
 
     def resize(self):
@@ -84,7 +131,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        temp_storage = [None] * self.capacity
+        for i in range(self.capacity // 2):
+            temp_storage[i] = self.storage[i]
+        self.storage = temp_storage
+
+# h = HashTable(10)
+# h._hash('hello')
+# h._hash('hello world')
 
 
 

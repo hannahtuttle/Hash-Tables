@@ -133,10 +133,13 @@ class TestHashTable(unittest.TestCase):
         ht.remove("key-0")
 
         return_value = ht.retrieve("key-0")
+        # print(return_value)
         self.assertTrue(return_value is None)
         return_value = ht.retrieve("key-1")
+        # print(return_value)
         self.assertTrue(return_value is None)
         return_value = ht.retrieve("key-2")
+        # print(return_value)
         self.assertTrue(return_value is None)
         return_value = ht.retrieve("key-3")
         self.assertTrue(return_value is None)
