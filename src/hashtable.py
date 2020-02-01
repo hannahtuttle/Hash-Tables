@@ -14,6 +14,7 @@ class HashTable:
     '''
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
+        self.count = 0
         self.storage = [None] * capacity
 
 
@@ -23,10 +24,10 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
-        out_put = (len(key) * 528) 
+        out_put = (len(key) * 529) 
         # print(out_put)
         # return hash(key)
-        return out_put
+        return (len(key) * 529)
 
 
     def _hash_djb2(self, key):
@@ -35,7 +36,11 @@ class HashTable:
 
         OPTIONAL STRETCH: Research and implement DJB2
         '''
-        pass
+        num = 5381
+        for x in key:
+            num = ((num << 5) + num) + ord(x)
+        # print(num)
+        return num 
 
 
     def _hash_mod(self, key):
@@ -43,6 +48,8 @@ class HashTable:
         Take an arbitrary key and return a valid integer index
         within the storage capacity of the hash table.
         '''
+        # print('*******************testing the new hash**************')
+        # print(self._hash_djb2(key) % self.capacity)
         return self._hash(key) % self.capacity
 
 
@@ -56,22 +63,27 @@ class HashTable:
         '''
         idx = self._hash_mod(key)
         # print('testing index',idx)
-        if self.storage[idx] is not None:
-            temp = self.storage[idx]
-            while temp.next is not None:
-                if temp.key is key:
-                    temp.value = value
-                    # print(temp.value)
-                    break
-                temp = temp.next
-            if temp.key is key and temp.value is value:
-                pass
-            elif temp.key is key and temp.value is not value:
-                temp.value = value
-            else:
-                temp.next = LinkedPair(key, value)
+        if self.count is self.capacity:
+            self.resize()
         else:
-            self.storage[idx] = LinkedPair(key, value)
+            if self.storage[idx] is not None:
+                temp = self.storage[idx]
+                while temp.next is not None:
+                    if temp.key is key:
+                        temp.value = value
+                        # print(temp.value)
+                        break
+                    temp = temp.next
+                if temp.key is key and temp.value is value:
+                    pass
+                elif temp.key is key and temp.value is not value:
+                    temp.value = value
+                else:
+                    temp.next = LinkedPair(key, value)
+            else:
+                self.storage[idx] = LinkedPair(key, value)
+                self.count += 1
+        # print('count', self.count)
         
 
 
@@ -111,10 +123,11 @@ class HashTable:
         Fill this in.
         '''
         idx = self._hash_mod(key)
+        print('testing index from retrieve',idx)
         current_node = self.storage[idx]
         # print(key)
         # self.storage[idx] = None
-        # print(self.storage[idx])
+        # print(self.storage[idx].value)
         current_val = None
         if current_node is not None:
             while current_node.key is not key and current_node.next is not None:
@@ -131,15 +144,23 @@ class HashTable:
 
         Fill this in.
         '''
+        
         self.capacity *= 2
         temp_storage = [None] * self.capacity
-        for i in range(self.capacity // 2):
-            temp_storage[i] = self.storage[i]
+        for idx in range(self.capacity // 2):
+            temp_storage[idx] = self.storage[idx]
         self.storage = temp_storage
+        # print('**************************************************************')
+        # for i in range(self.capacity):
+        #     if self.storage[i] is None:
+        #         print('None')
+        #     else:
+        #         print(self.storage[i].value)
+                
 
 # h = HashTable(10)
-# h._hash('hello')
-# h._hash('hello world')
+# h._hash_djb2('hello')
+# h._hash_djb2('hello world')
 
 
 
